@@ -1,31 +1,49 @@
 package com.swingapp;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class AdminJPanel extends JPanel {
+public class AdminJPanel extends JPanel implements ActionListener {
+
+    private JLabel usernameLabel, passwordLabel;
+    private JTextField usernameField;
+    private JPasswordField passwordField;
+    private JButton loginButton, logoutButton;
 
     public AdminJPanel() {
 
-        JLabel usernameLabel = new JLabel("Username:");
+        usernameLabel = new JLabel("Username:");
         this.add(usernameLabel);
 
-        JTextField usernameField = new JTextField(15);
+        usernameField = new JTextField(15);
         this.add(usernameField);
 
-        JLabel passwordLabel = new JLabel("Password:");
+        passwordLabel = new JLabel("Password:");
         this.add(passwordLabel);
 
-        JPasswordField passwordField = new JPasswordField(15);
+        passwordField = new JPasswordField(15);
         this.add(passwordField);
 
-        JButton loginButton = new JButton("Login");
+        loginButton = new JButton("Login");
         this.add(loginButton);
+        loginButton.addActionListener(this);
 
-        JButton logoutButton = new JButton("Logout");
+        logoutButton = new JButton("Logout");
         this.add(logoutButton);
+        logoutButton.addActionListener(this);
 
-        logoutButton.setEnabled(false);
+//        logoutButton.setEnabled(false);
 
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == loginButton) {
+            usernameField.setText("Log in!");
+        }
+        else if (e.getSource() == logoutButton) {
+            usernameField.setText("Log out!");
+        }
+    }
 }
