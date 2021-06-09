@@ -33,7 +33,6 @@ public class AdminApp extends JPanel implements ActionListener {
         this.add(passwordField);
         this.add(loginButton);
         this.add(logoutButton);
-        this.add(userTable);
 
         // Add action listeners to respond to button clicks
         loginButton.addActionListener(this);
