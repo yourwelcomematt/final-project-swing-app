@@ -73,6 +73,9 @@ public class AdminApp extends JPanel implements ActionListener {
         protected Boolean doInBackground() throws Exception {
             return null;
         }
+
+        @Override
+        protected void done() {}
     }
 
 
