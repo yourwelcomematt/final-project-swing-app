@@ -10,11 +10,15 @@ public class AdminApp extends JPanel implements ActionListener {
     private JLabel usernameLabel, passwordLabel;
     private JTextField usernameField;
     private JPasswordField passwordField;
-    private JButton loginButton, logoutButton;
+    private JButton loginButton, logoutButton, deleteUserButton;
+    private JTable userTable;
 
-
+    /**
+     * Constructor method to create the Admin application's content pane
+     */
     public AdminApp() {
 
+        // Create basic GUI components
         usernameLabel = new JLabel("Username:");
         usernameField = new JTextField(15);
         passwordLabel = new JLabel("Password:");
@@ -22,21 +26,28 @@ public class AdminApp extends JPanel implements ActionListener {
         loginButton = new JButton("Login");
         logoutButton = new JButton("Logout");
 
+        // Add components to the content pane
         this.add(usernameLabel);
         this.add(usernameField);
         this.add(passwordLabel);
         this.add(passwordField);
         this.add(loginButton);
         this.add(logoutButton);
+        this.add(userTable);
 
+        // Add action listeners to respond to button clicks
         loginButton.addActionListener(this);
         logoutButton.addActionListener(this);
 
+        // Disable the log out button initially
 //        logoutButton.setEnabled(false);
 
     }
 
 
+    /**
+     * Creates and displays the Admin application's GUI
+     */
     public static void createAndShowGUI() {
 
         // Create and set up the window
@@ -53,16 +64,19 @@ public class AdminApp extends JPanel implements ActionListener {
         window.setLocationRelativeTo(null);
         window.setVisible(true);
         contentPane.requestFocusInWindow();
+
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
-            usernameField.setText("Log in!");
+            usernameField.setText("Logged in!");
+//            loginButton.setEnabled(false);
         }
         else if (e.getSource() == logoutButton) {
-            usernameField.setText("Log out!");
+            usernameField.setText("Logged out!");
+//            logoutButton.setEnabled(false);
         }
     }
 
