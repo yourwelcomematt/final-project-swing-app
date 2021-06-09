@@ -68,11 +68,19 @@ public class AdminApp extends JPanel implements ActionListener {
     }
 
 
+    private class LoginWorker extends SwingWorker<Boolean, Void> {
+        @Override
+        protected Boolean doInBackground() throws Exception {
+            return null;
+        }
+    }
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
             usernameField.setText("Logged in!");
-//            loginButton.setEnabled(false);
+            loginButton.setEnabled(false);
         }
         else if (e.getSource() == logoutButton) {
             usernameField.setText("Logged out!");
