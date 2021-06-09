@@ -85,7 +85,7 @@ public class AdminApp extends JPanel implements ActionListener {
 
         @Override
         protected void done() {
-            logoutButton.setEnabled(true);
+            loginButton.setEnabled(true);
 
             try {
                 String result = get();
@@ -103,8 +103,8 @@ public class AdminApp extends JPanel implements ActionListener {
             String usernameInput = usernameField.getText();
             String passwordInput = String.valueOf(passwordField.getPassword());
 
-            System.out.println(usernameInput);
-            System.out.println(passwordInput);
+//            System.out.println(usernameInput);
+//            System.out.println(passwordInput);
 
             loginButton.setEnabled(false);
 

@@ -67,6 +67,14 @@ public class API {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         String responseJson = response.body();
 
+        int responseCode = response.statusCode();
+        System.out.println(responseCode);
+
+        if (responseCode == 204) {
+            System.out.println("Success!");
+        } else {
+            System.out.println("Fail");
+        }
 
 //        return JSONUtils.toObject(responseJson, User.class);
         return responseJson;
