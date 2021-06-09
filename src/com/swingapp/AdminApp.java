@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.ExecutionException;
 
 public class AdminApp extends JPanel implements ActionListener {
 
@@ -39,7 +40,7 @@ public class AdminApp extends JPanel implements ActionListener {
         logoutButton.addActionListener(this);
 
         // Disable the log out button initially
-//        logoutButton.setEnabled(false);
+        logoutButton.setEnabled(false);
 
     }
 
@@ -67,22 +68,48 @@ public class AdminApp extends JPanel implements ActionListener {
     }
 
 
-    private class LoginWorker extends SwingWorker<Boolean, Void> {
-        @Override
-        protected Boolean doInBackground() throws Exception {
-            return null;
+    private class LoginWorker extends SwingWorker<String, Void> {
+        private String usernameInput;
+        private String passwordInput;
+
+        protected LoginWorker(String usernameInput, String passwordInput) {
+            this.usernameInput = usernameInput;
+            this.passwordInput = passwordInput;
         }
 
         @Override
-        protected void done() {}
+        protected String doInBackground() throws Exception {
+            LoginQuery loginQuery = new LoginQuery(this.usernameInput, this.passwordInput);
+            return API.getInstance().authenticateUser(loginQuery);
+        }
+
+        @Override
+        protected void done() {
+            logoutButton.setEnabled(true);
+
+            try {
+                String result = get();
+//                System.out.println(result);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
-            usernameField.setText("Logged in!");
+            String usernameInput = usernameField.getText();
+            String passwordInput = String.valueOf(passwordField.getPassword());
+
+            System.out.println(usernameInput);
+            System.out.println(passwordInput);
+
             loginButton.setEnabled(false);
+
+            LoginWorker loginWorker = new LoginWorker(usernameInput, passwordInput);
+            loginWorker.execute();
         }
         else if (e.getSource() == logoutButton) {
             usernameField.setText("Logged out!");

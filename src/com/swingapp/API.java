@@ -51,23 +51,25 @@ public class API {
 //        return JSONUtils.toObject(json, Pokemon.class);
 //    }
 //
-//    public Pokemon getRandomPokemonOfType(TypeQuery typeQuery) throws IOException, InterruptedException {
-//
-//        String json = JSONUtils.toJSON(typeQuery);
-//
-//        HttpRequest.Builder builder = HttpRequest.newBuilder()
-//                .uri(URI.create(BASE_URL + "/random"))
-//                .setHeader("Content-Type", "application/json")
-//                .setHeader("Accept", "application/json")
-//                .method("POST", HttpRequest.BodyPublishers.ofString(json));
-//
-//        HttpRequest request = builder.build();
-//
-//        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//        String responseJson = response.body();
-//
-//
-//        return JSONUtils.toObject(responseJson, Pokemon.class);
-//    }
+    public String authenticateUser(LoginQuery loginQuery) throws IOException, InterruptedException {
+
+        String json = JSONUtils.toJSON(loginQuery);
+        System.out.println(json);
+
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/login"))
+                .setHeader("Content-Type", "application/json")
+                .setHeader("Accept", "application/json")
+                .method("POST", HttpRequest.BodyPublishers.ofString(json));
+
+        HttpRequest request = builder.build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String responseJson = response.body();
+
+
+//        return JSONUtils.toObject(responseJson, User.class);
+        return responseJson;
+    }
 
 }
