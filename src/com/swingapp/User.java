@@ -17,10 +17,10 @@ public class User {
     public int getId() { return id; }
 //    public void setId(int id) { this.id = id; }
 
-    public String getFirstName() { return fname; }
+    public String getFname() { return fname; }
 //    public void setFirstName(String fname) { this.fname = fname; }
 
-    public String getLastName() { return lname; }
+    public String getLname() { return lname; }
 //    public void setLastName(String lname) { this.lname = lname; }
 
     public String getUsername() { return username; }

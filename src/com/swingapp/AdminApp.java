@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class AdminApp extends JPanel implements ActionListener {
@@ -27,6 +28,7 @@ public class AdminApp extends JPanel implements ActionListener {
         passwordField = new JPasswordField(15);
         loginButton = new JButton("Login");
         logoutButton = new JButton("Logout");
+        deleteUserButton = new JButton("Delete user");
 
         // Add components to the content pane
         this.add(usernameLabel);
@@ -35,14 +37,15 @@ public class AdminApp extends JPanel implements ActionListener {
         this.add(passwordField);
         this.add(loginButton);
         this.add(logoutButton);
+        this.add(deleteUserButton);
 
         // Add action listeners to respond to button clicks
         loginButton.addActionListener(this);
         logoutButton.addActionListener(this);
 
-        // Disable the log out button initially
+        // Disable the log out and delete user buttons initially
         logoutButton.setEnabled(false);
-
+        deleteUserButton.setEnabled(false);
     }
 
 
@@ -93,12 +96,33 @@ public class AdminApp extends JPanel implements ActionListener {
                 System.out.println("Result: " + result);
 
                 if (result) {
-                    System.out.println("Call other SwingWorker");
+                    UsersWorker usersWorker = new UsersWorker();
+                    usersWorker.execute();
                 } else {
                     JOptionPane.showMessageDialog(window, "Incorrect username and/or password");
                     loginButton.setEnabled(true);
                 }
 
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    private class UsersWorker extends SwingWorker<List<User>, Void> {
+        @Override
+        protected List<User> doInBackground() throws Exception {
+            return API.getInstance().getUserList();
+        }
+
+        @Override
+        protected void done() {
+            try {
+                List<User> result = get();
+                for (int i = 0; i < result.size(); i++) {
+                    System.out.println(result.get(i).getFname());
+                }
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
@@ -112,9 +136,6 @@ public class AdminApp extends JPanel implements ActionListener {
             String usernameInput = usernameField.getText();
             String passwordInput = String.valueOf(passwordField.getPassword());
 
-//            System.out.println(usernameInput);
-//            System.out.println(passwordInput);
-
             loginButton.setEnabled(false);
 
             LoginWorker loginWorker = new LoginWorker(usernameInput, passwordInput);
@@ -127,6 +148,9 @@ public class AdminApp extends JPanel implements ActionListener {
     }
 
 
+    /**
+     * Starts the Admin application
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override

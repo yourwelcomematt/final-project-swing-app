@@ -36,21 +36,23 @@ public class API {
                 .build();
     }
 
-//    public Pokemon getRandomPokemon() throws IOException, InterruptedException {
-//        HttpRequest.Builder builder = HttpRequest.newBuilder()
-//                .uri(URI.create(BASE_URL + "/random"))
-//                .setHeader("Accept", "application/json")
-//                .method("GET", HttpRequest.BodyPublishers.noBody());
-//
-//        HttpRequest request = builder.build();
-//
-//        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//        String json = response.body();
-//
-//
-//        return JSONUtils.toObject(json, Pokemon.class);
-//    }
-//
+
+    public List<User> getUserList() throws IOException, InterruptedException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/users"))
+                .setHeader("Accept", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody());
+
+        HttpRequest request = builder.build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String json = response.body();
+        System.out.println(json);
+
+        return JSONUtils.toList(json, User.class);
+    }
+
+
     public Boolean authenticateUser(LoginQuery loginQuery) throws IOException, InterruptedException {
 
         String json = JSONUtils.toJSON(loginQuery);
@@ -65,7 +67,6 @@ public class API {
         HttpRequest request = builder.build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-//        String responseJson = response.body();
 
         int responseCode = response.statusCode();
         System.out.println("Response code: " + responseCode);
@@ -77,9 +78,5 @@ public class API {
             System.out.println("Failed to authenticate...");
             return false;
         }
-
-//        return JSONUtils.toObject(responseJson, User.class);
-//        return responseJson;
     }
-
 }
