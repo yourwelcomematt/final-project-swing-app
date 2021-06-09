@@ -51,7 +51,7 @@ public class API {
 //        return JSONUtils.toObject(json, Pokemon.class);
 //    }
 //
-    public String authenticateUser(LoginQuery loginQuery) throws IOException, InterruptedException {
+    public Boolean authenticateUser(LoginQuery loginQuery) throws IOException, InterruptedException {
 
         String json = JSONUtils.toJSON(loginQuery);
         System.out.println(json);
@@ -65,19 +65,21 @@ public class API {
         HttpRequest request = builder.build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        String responseJson = response.body();
+//        String responseJson = response.body();
 
         int responseCode = response.statusCode();
-        System.out.println(responseCode);
+        System.out.println("Response code: " + responseCode);
 
         if (responseCode == 204) {
-            System.out.println("Success!");
+            System.out.println("Successfully authenticated!");
+            return true;
         } else {
-            System.out.println("Fail");
+            System.out.println("Failed to authenticate...");
+            return false;
         }
 
 //        return JSONUtils.toObject(responseJson, User.class);
-        return responseJson;
+//        return responseJson;
     }
 
 }

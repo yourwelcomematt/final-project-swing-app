@@ -13,6 +13,7 @@ public class AdminApp extends JPanel implements ActionListener {
     private JPasswordField passwordField;
     private JButton loginButton, logoutButton, deleteUserButton;
     private JTable userTable;
+    private JFrame window;
 
     /**
      * Constructor method to create the Admin application's content pane
@@ -48,10 +49,11 @@ public class AdminApp extends JPanel implements ActionListener {
     /**
      * Creates and displays the Admin application's GUI
      */
-    public static void createAndShowGUI() {
+    public void createAndShowGUI() {
 
         // Create and set up the window
-        JFrame window = new JFrame("Admin App");
+//        JFrame window = new JFrame("Admin App");
+        window = new JFrame("Admin App");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Create and set up the content pane
@@ -68,7 +70,7 @@ public class AdminApp extends JPanel implements ActionListener {
     }
 
 
-    private class LoginWorker extends SwingWorker<String, Void> {
+    private class LoginWorker extends SwingWorker<Boolean, Void> {
         private String usernameInput;
         private String passwordInput;
 
@@ -78,18 +80,25 @@ public class AdminApp extends JPanel implements ActionListener {
         }
 
         @Override
-        protected String doInBackground() throws Exception {
+        protected Boolean doInBackground() throws Exception {
             LoginQuery loginQuery = new LoginQuery(this.usernameInput, this.passwordInput);
             return API.getInstance().authenticateUser(loginQuery);
         }
 
         @Override
         protected void done() {
-            loginButton.setEnabled(true);
 
             try {
-                String result = get();
-//                System.out.println(result);
+                Boolean result = get();
+                System.out.println("Result: " + result);
+
+                if (result) {
+                    System.out.println("Call other SwingWorker");
+                } else {
+                    JOptionPane.showMessageDialog(window, "Incorrect username and/or password");
+                    loginButton.setEnabled(true);
+                }
+
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
@@ -122,7 +131,8 @@ public class AdminApp extends JPanel implements ActionListener {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                createAndShowGUI();
+                AdminApp adminApp = new AdminApp();
+                adminApp.createAndShowGUI();
             }
         });
     }
