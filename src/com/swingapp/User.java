@@ -47,4 +47,21 @@ public class User {
     public int getNumArticles() { return numArticles; }
 //    public void setNumArticles(int numArticles) { this.numArticles = numArticles; }
 
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", fname='" + fname + '\'' +
+                ", lname='" + lname + '\'' +
+                ", username='" + username + '\'' +
+                ", dob='" + dob + '\'' +
+                ", password='" + password + '\'' +
+                ", description='" + description + '\'' +
+                ", imageSource='" + imageSource + '\'' +
+                ", authToken='" + authToken + '\'' +
+                ", admin=" + admin +
+                ", numArticles=" + numArticles +
+                '}';
+    }
 }

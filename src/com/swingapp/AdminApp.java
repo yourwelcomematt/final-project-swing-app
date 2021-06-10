@@ -78,6 +78,7 @@ public class AdminApp extends JPanel implements ActionListener {
         // Add action listeners to respond to button clicks
         loginButton.addActionListener(this);
         logoutButton.addActionListener(this);
+        deleteUserButton.addActionListener(this);
 
         // Disable the log out and delete user buttons initially
         logoutButton.setEnabled(false);
@@ -156,9 +157,13 @@ public class AdminApp extends JPanel implements ActionListener {
         protected void done() {
             try {
                 List<User> result = get();
+                DefaultTableModel model = (DefaultTableModel) userTable.getModel();
 
                 for (int i = 0; i < result.size(); i++) {
-                    System.out.println(result.get(i).getFname());
+                    User user = result.get(i);
+//                    System.out.println(user.toString());
+                    Object[] row = {user.getId(), user.getFname(), user.getLname(), user.getUsername(), user.getDob(), user.getPassword(), user.getDescription(), user.getImageSource(), user.getAuthToken(), user.getAdmin(), user.getNumArticles()};
+                    model.addRow(row);
                 }
 
                 logoutButton.setEnabled(true);
@@ -184,6 +189,9 @@ public class AdminApp extends JPanel implements ActionListener {
         else if (e.getSource() == logoutButton) {
             usernameField.setText("Logged out!");
 //            logoutButton.setEnabled(false);
+        }
+        else if (e.getSource() == deleteUserButton) {
+            JOptionPane.showMessageDialog(window, "User deleted!");
         }
     }
 
