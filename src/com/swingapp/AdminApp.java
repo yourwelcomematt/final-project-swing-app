@@ -130,13 +130,13 @@ public class AdminApp extends JPanel implements ActionListener {
 
             try {
                 Boolean result = get();
-                System.out.println("Result: " + result);
+//                System.out.println("Result: " + result);
 
                 if (result) {
                     UsersWorker usersWorker = new UsersWorker();
                     usersWorker.execute();
                 } else {
-                    JOptionPane.showMessageDialog(window, "Incorrect username and/or password");
+                    JOptionPane.showMessageDialog(window, "Incorrect username and/or password and/or not an admin");
                     loginButton.setEnabled(true);
                 }
 
@@ -195,6 +195,28 @@ public class AdminApp extends JPanel implements ActionListener {
     }
 
 
+    private class DeleteUserWorker extends SwingWorker<Void, Void> {
+
+        private Object id;
+
+        protected DeleteUserWorker(Object id) {
+            this.id = id;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            API.getInstance().deleteUser(id);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            JOptionPane.showMessageDialog(window, "User deleted!");
+            deleteUserButton.setEnabled(true);
+        }
+    }
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == loginButton) {
@@ -213,7 +235,19 @@ public class AdminApp extends JPanel implements ActionListener {
             logoutWorker.execute();
         }
         else if (e.getSource() == deleteUserButton) {
-            JOptionPane.showMessageDialog(window, "User deleted!");
+            deleteUserButton.setEnabled(false);
+
+            DefaultTableModel model = (DefaultTableModel) userTable.getModel();
+            int selectedRow = userTable.getSelectedRow();
+            Object selectedId = userTable.getValueAt(selectedRow, 0);
+
+            System.out.println("Selected row: " + selectedRow);
+            System.out.println("Selected user ID: " + selectedId);
+
+            model.removeRow(selectedRow);
+
+            DeleteUserWorker deleteUserWorker = new DeleteUserWorker(selectedId);
+            deleteUserWorker.execute();
         }
     }
 

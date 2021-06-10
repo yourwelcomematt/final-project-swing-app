@@ -53,7 +53,7 @@ public class API {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         int responseCode = response.statusCode();
-        System.out.println("Response code: " + responseCode);
+        System.out.println("Login response code: " + responseCode);
 
         List<HttpCookie> cookies = this.cookieManager.getCookieStore().get(URI.create(BASE_URL));
         System.out.println("Cookies: " + cookies);
@@ -78,7 +78,7 @@ public class API {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         String json = response.body();
-        System.out.println(json);
+//        System.out.println(json);
 
         return JSONUtils.toList(json, User.class);
     }
@@ -94,7 +94,23 @@ public class API {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         System.out.println("Logout response code: " + response.statusCode());
+
         List<HttpCookie> cookies = this.cookieManager.getCookieStore().get(URI.create(BASE_URL));
         System.out.println("Cookies: " + cookies);
+        System.out.println("Successfully logged out!");
+    }
+
+
+    public void deleteUser(Object id) throws IOException, InterruptedException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/users/" + id))
+                .setHeader("Accept", "application/json")
+                .method("DELETE", HttpRequest.BodyPublishers.noBody());
+
+        HttpRequest request = builder.build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("Delete response code: " + response.statusCode());
+        System.out.println("User deleted!");
     }
 }
