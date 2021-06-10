@@ -37,22 +37,6 @@ public class API {
     }
 
 
-    public List<User> getUserList() throws IOException, InterruptedException {
-        HttpRequest.Builder builder = HttpRequest.newBuilder()
-                .uri(URI.create(BASE_URL + "/users"))
-                .setHeader("Accept", "application/json")
-                .method("GET", HttpRequest.BodyPublishers.noBody());
-
-        HttpRequest request = builder.build();
-
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        String json = response.body();
-        System.out.println(json);
-
-        return JSONUtils.toList(json, User.class);
-    }
-
-
     public Boolean authenticateUser(LoginQuery loginQuery) throws IOException, InterruptedException {
 
         String json = JSONUtils.toJSON(loginQuery);
@@ -71,6 +55,9 @@ public class API {
         int responseCode = response.statusCode();
         System.out.println("Response code: " + responseCode);
 
+        List<HttpCookie> cookies = this.cookieManager.getCookieStore().get(URI.create(BASE_URL));
+        System.out.println("Cookies: " + cookies);
+
         if (responseCode == 204) {
             System.out.println("Successfully authenticated!");
             return true;
@@ -78,5 +65,36 @@ public class API {
             System.out.println("Failed to authenticate...");
             return false;
         }
+    }
+
+
+    public List<User> getUserList() throws IOException, InterruptedException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/users"))
+                .setHeader("Accept", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody());
+
+        HttpRequest request = builder.build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String json = response.body();
+        System.out.println(json);
+
+        return JSONUtils.toList(json, User.class);
+    }
+
+
+    public void logoutUser() throws IOException, InterruptedException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/logout"))
+                .setHeader("Accept", "application/json")
+                .method("GET", HttpRequest.BodyPublishers.noBody());
+
+        HttpRequest request = builder.build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("Logout response code: " + response.statusCode());
+        List<HttpCookie> cookies = this.cookieManager.getCookieStore().get(URI.create(BASE_URL));
+        System.out.println("Cookies: " + cookies);
     }
 }

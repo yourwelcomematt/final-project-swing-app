@@ -166,11 +166,31 @@ public class AdminApp extends JPanel implements ActionListener {
                     model.addRow(row);
                 }
 
+                JOptionPane.showMessageDialog(window, "Log in successful!");
                 logoutButton.setEnabled(true);
                 deleteUserButton.setEnabled(true);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+
+    private class LogoutWorker extends SwingWorker<Void, Void> {
+        @Override
+        protected Void doInBackground() throws Exception {
+            API.getInstance().logoutUser();
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            usernameField.setText("");
+            passwordField.setText("");
+            DefaultTableModel model = (DefaultTableModel) userTable.getModel();
+            model.setRowCount(0);
+            JOptionPane.showMessageDialog(window, "Log out successful!");
+            loginButton.setEnabled(true);
         }
     }
 
@@ -187,8 +207,10 @@ public class AdminApp extends JPanel implements ActionListener {
             loginWorker.execute();
         }
         else if (e.getSource() == logoutButton) {
-            usernameField.setText("Logged out!");
-//            logoutButton.setEnabled(false);
+            logoutButton.setEnabled(false);
+            deleteUserButton.setEnabled(false);
+            LogoutWorker logoutWorker = new LogoutWorker();
+            logoutWorker.execute();
         }
         else if (e.getSource() == deleteUserButton) {
             JOptionPane.showMessageDialog(window, "User deleted!");
