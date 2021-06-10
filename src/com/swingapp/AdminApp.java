@@ -1,6 +1,7 @@
 package com.swingapp;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,14 +31,49 @@ public class AdminApp extends JPanel implements ActionListener {
         logoutButton = new JButton("Logout");
         deleteUserButton = new JButton("Delete user");
 
+        // Create table
+        String[] columnNames = {"ID", "fName", "lName", "Username", "DOB", "Password", "Description", "Profile Image", "AuthToken", "Admin", "NumArticles"};
+
+        DefaultTableModel model = new DefaultTableModel(0, columnNames.length);
+        model.setColumnIdentifiers(columnNames);
+        userTable = new JTable(model);
+        JScrollPane scrollPane = new JScrollPane(userTable);
+
+        // Set layout of the content pane
+        this.setLayout(new BorderLayout());
+
+        JPanel usernamePane = new JPanel();
+        usernamePane.setLayout(new BoxLayout(usernamePane, BoxLayout.LINE_AXIS));
+        usernamePane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        usernamePane.add(usernameLabel);
+        usernamePane.add(usernameField);
+
+        JPanel passwordPane = new JPanel();
+        passwordPane.setLayout(new BoxLayout(passwordPane, BoxLayout.LINE_AXIS));
+        passwordPane.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        passwordPane.add(passwordLabel);
+        passwordPane.add(passwordField);
+
+        JPanel inputsPane = new JPanel();
+        inputsPane.setLayout(new BoxLayout(inputsPane, BoxLayout.LINE_AXIS));
+        inputsPane.add(usernamePane);
+        inputsPane.add(passwordPane);
+
+        JPanel buttonsPane = new JPanel();
+        buttonsPane.setLayout(new BoxLayout(buttonsPane, BoxLayout.LINE_AXIS));
+        buttonsPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
+        buttonsPane.add(loginButton);
+        buttonsPane.add(logoutButton);
+
+        JPanel loginPane = new JPanel();
+        loginPane.setLayout(new BoxLayout(loginPane, BoxLayout.PAGE_AXIS));
+        loginPane.add(inputsPane);
+        loginPane.add(buttonsPane);
+
         // Add components to the content pane
-        this.add(usernameLabel);
-        this.add(usernameField);
-        this.add(passwordLabel);
-        this.add(passwordField);
-        this.add(loginButton);
-        this.add(logoutButton);
-        this.add(deleteUserButton);
+        this.add(loginPane, BorderLayout.PAGE_START);
+        this.add(scrollPane, BorderLayout.CENTER);
+        this.add(deleteUserButton, BorderLayout.PAGE_END);
 
         // Add action listeners to respond to button clicks
         loginButton.addActionListener(this);
@@ -64,7 +100,7 @@ public class AdminApp extends JPanel implements ActionListener {
         window.add(contentPane);
 
         // Display the window
-        contentPane.setPreferredSize(new Dimension(300, 300));
+        contentPane.setPreferredSize(new Dimension(700, 500));
         window.pack();
         window.setLocationRelativeTo(null);
         window.setVisible(true);
@@ -120,9 +156,13 @@ public class AdminApp extends JPanel implements ActionListener {
         protected void done() {
             try {
                 List<User> result = get();
+
                 for (int i = 0; i < result.size(); i++) {
                     System.out.println(result.get(i).getFname());
                 }
+
+                logoutButton.setEnabled(true);
+                deleteUserButton.setEnabled(true);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
