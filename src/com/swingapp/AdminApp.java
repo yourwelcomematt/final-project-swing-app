@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+
 public class AdminApp extends JPanel implements ActionListener {
 
     private JLabel usernameLabel, passwordLabel;
@@ -110,10 +111,14 @@ public class AdminApp extends JPanel implements ActionListener {
     }
 
 
+    /**
+     * SwingWorker which handles log ins
+     */
     private class LoginWorker extends SwingWorker<Boolean, Void> {
         private String usernameInput;
         private String passwordInput;
 
+        // LoginWorker constructor
         protected LoginWorker(String usernameInput, String passwordInput) {
             this.usernameInput = usernameInput;
             this.passwordInput = passwordInput;
@@ -130,11 +135,12 @@ public class AdminApp extends JPanel implements ActionListener {
 
             try {
                 Boolean result = get();
-//                System.out.println("Result: " + result);
 
+                // If the user is an admin, call the UsersWorker
                 if (result) {
                     UsersWorker usersWorker = new UsersWorker();
                     usersWorker.execute();
+                // If the user not an admin, display an error message
                 } else {
                     JOptionPane.showMessageDialog(window, "Incorrect username and/or password and/or not an admin");
                     loginButton.setEnabled(true);
@@ -147,6 +153,9 @@ public class AdminApp extends JPanel implements ActionListener {
     }
 
 
+    /**
+     * SwingWorker which retrieves all users and displays them in the JTable
+     */
     private class UsersWorker extends SwingWorker<List<User>, Void> {
         @Override
         protected List<User> doInBackground() throws Exception {
@@ -157,11 +166,13 @@ public class AdminApp extends JPanel implements ActionListener {
         protected void done() {
             try {
                 List<User> result = get();
+
                 DefaultTableModel model = (DefaultTableModel) userTable.getModel();
 
+                // Iterates through the list of users and adds them to the table
                 for (int i = 0; i < result.size(); i++) {
                     User user = result.get(i);
-//                    System.out.println(user.toString());
+
                     Object[] row = {user.getId(), user.getFname(), user.getLname(), user.getUsername(), user.getDob(), user.getPassword(), user.getDescription(), user.getImageSource(), user.getAuthToken(), user.getAdmin(), user.getNumArticles()};
                     model.addRow(row);
                 }
@@ -176,6 +187,9 @@ public class AdminApp extends JPanel implements ActionListener {
     }
 
 
+    /**
+     * SwingWorker which handles log outs
+     */
     private class LogoutWorker extends SwingWorker<Void, Void> {
         @Override
         protected Void doInBackground() throws Exception {
@@ -183,6 +197,7 @@ public class AdminApp extends JPanel implements ActionListener {
             return null;
         }
 
+        // Clears the username field, password field, and table
         @Override
         protected void done() {
             usernameField.setText("");
@@ -195,6 +210,9 @@ public class AdminApp extends JPanel implements ActionListener {
     }
 
 
+    /**
+     * SwingWorker which handles deleting of users
+     */
     private class DeleteUserWorker extends SwingWorker<Void, Void> {
 
         private Object id;
@@ -219,6 +237,8 @@ public class AdminApp extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        // When the login button is clicked, get the username and password inputs,
+        // disable the login button, create a new LoginWorker and start it
         if (e.getSource() == loginButton) {
             String usernameInput = usernameField.getText();
             String passwordInput = String.valueOf(passwordField.getPassword());
@@ -228,21 +248,23 @@ public class AdminApp extends JPanel implements ActionListener {
             LoginWorker loginWorker = new LoginWorker(usernameInput, passwordInput);
             loginWorker.execute();
         }
+        // When the logout button is clicked, disable the logout and delete user buttons,
+        // create a new LogoutWorker, and start it
         else if (e.getSource() == logoutButton) {
             logoutButton.setEnabled(false);
             deleteUserButton.setEnabled(false);
             LogoutWorker logoutWorker = new LogoutWorker();
             logoutWorker.execute();
         }
+        // When the delete user button is clicked, disable the delete user buttons,
+        // retrieve the table model, get the selected row, get the id of the user at the
+        // selected row, remove the selected row, create a new DeleteUserWorker, and start it
         else if (e.getSource() == deleteUserButton) {
             deleteUserButton.setEnabled(false);
 
             DefaultTableModel model = (DefaultTableModel) userTable.getModel();
             int selectedRow = userTable.getSelectedRow();
             Object selectedId = userTable.getValueAt(selectedRow, 0);
-
-            System.out.println("Selected row: " + selectedRow);
-            System.out.println("Selected user ID: " + selectedId);
 
             model.removeRow(selectedRow);
 

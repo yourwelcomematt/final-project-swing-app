@@ -36,11 +36,13 @@ public class API {
                 .build();
     }
 
-
+    /**
+     * Converts the LoginQueryObject to a JSON string and sends a HTTP POST request to
+     * /api/login - if a 204 success response code is received, return true, else return false
+     */
     public Boolean authenticateUser(LoginQuery loginQuery) throws IOException, InterruptedException {
 
         String json = JSONUtils.toJSON(loginQuery);
-        System.out.println(json);
 
         HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/login"))
@@ -53,21 +55,18 @@ public class API {
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         int responseCode = response.statusCode();
-        System.out.println("Login response code: " + responseCode);
-
-        List<HttpCookie> cookies = this.cookieManager.getCookieStore().get(URI.create(BASE_URL));
-        System.out.println("Cookies: " + cookies);
 
         if (responseCode == 204) {
-            System.out.println("Successfully authenticated!");
             return true;
         } else {
-            System.out.println("Failed to authenticate...");
             return false;
         }
     }
 
-
+    /**
+     * Sends a GET request to /api/users and converts the retrieved JSON string into a list
+     * and returns it
+     */
     public List<User> getUserList() throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/users"))
@@ -78,12 +77,13 @@ public class API {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         String json = response.body();
-//        System.out.println(json);
 
         return JSONUtils.toList(json, User.class);
     }
 
-
+    /**
+     * Sends a GET request to /api/logout
+     */
     public void logoutUser() throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/logout"))
@@ -93,14 +93,11 @@ public class API {
         HttpRequest request = builder.build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Logout response code: " + response.statusCode());
-
-        List<HttpCookie> cookies = this.cookieManager.getCookieStore().get(URI.create(BASE_URL));
-        System.out.println("Cookies: " + cookies);
-        System.out.println("Successfully logged out!");
     }
 
-
+    /**
+     * Sends a DELETE request to /api/users and appends the id parameter to the end
+     */
     public void deleteUser(Object id) throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/users/" + id))
@@ -110,7 +107,5 @@ public class API {
         HttpRequest request = builder.build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("Delete response code: " + response.statusCode());
-        System.out.println("User deleted!");
     }
 }
